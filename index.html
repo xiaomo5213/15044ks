@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15044 自考马原 · 在线知识文库</title>
+<style>
+  :root{
+    --bg:#f5f8f7; --panel:#ffffff; --ink:#27342f; --sub:#6b7d77;
+    --mint:#37b48a; --mint-d:#2f7a66; --mint-l:#e8f5f0; --mint-line:#9fd3c7;
+    --shadow:0 4px 18px rgba(47,122,102,.08); --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,"Microsoft YaHei",serif;
+    background:var(--bg); color:var(--ink); line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  header.top{
+    position:sticky; top:0; z-index:30; background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px); border-bottom:1px solid #eaf1ef;
+    padding:14px 22px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--mint),#5fd0a8);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px;flex:none}
+  .brand h1{font-size:19px;margin:0;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+  .brand p{margin:1px 0 0;font-size:12px;color:var(--sub);font-family:"Microsoft YaHei",sans-serif}
+  .spacer{flex:1}
+  .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:"Microsoft YaHei",sans-serif}
+  .tools button, .tools select{
+    font-family:inherit;font-size:13px;color:var(--mint-d);background:#fff;
+    border:1px solid #d8e9e3;border-radius:9px;padding:6px 11px;cursor:pointer;transition:.18s;
+  }
+  .tools button:hover{background:var(--mint-l);border-color:var(--mint-line)}
+  .tools button.on{background:var(--mint);color:#fff;border-color:var(--mint)}
+  .seg{display:inline-flex;border:1px solid #d8e9e3;border-radius:9px;overflow:hidden}
+  .seg button{border:none;border-radius:0;border-right:1px solid #d8e9e3}
+  .seg button:last-child{border-right:none}
+
+  /* page layout: centered content body */
+  .page-main{max-width:880px;margin:0 auto;padding:14px 20px 40px}
+
+  /* section tabs */
+  .tabs{display:flex;gap:10px;padding:14px 0 0;flex-wrap:wrap;font-family:"Microsoft YaHei",sans-serif}
+  .tab{font-size:14px;padding:9px 16px;border-radius:11px 11px 0 0;cursor:pointer;color:var(--sub);
+    background:#eef4f2;border:1px solid #e1ece9;border-bottom:none;transition:.18s}
+  .tab:hover{color:var(--mint-d)}
+  .tab.on{background:#fff;color:var(--mint-d);font-weight:700;box-shadow:0 -3px 10px rgba(47,122,102,.06)}
+
+  main{padding:18px 0 0}
+
+  /* intro note */
+  .note{background:#fff;border:1px solid #e6f0ed;border-left:4px solid var(--mint);
+    border-radius:12px;padding:16px 20px;margin-bottom:20px;font-family:"Microsoft YaHei",sans-serif;
+    box-shadow:var(--shadow)}
+  .note h3{margin:0 0 8px;font-size:15px;color:var(--mint-d);display:flex;align-items:center;gap:8px}
+  .note ul{margin:6px 0 0;padding-left:20px;font-size:13.5px;color:var(--sub);line-height:1.8}
+  .note .toggle{cursor:pointer;font-size:12px;color:var(--mint);user-select:none}
+
+  .page-meta{font-family:"Microsoft YaHei",sans-serif;color:var(--sub);font-size:13px;margin:4px 2px 14px;
+    display:flex;align-items:center;gap:8px}
+  .page-meta b{color:var(--mint-d)}
+
+  /* knowledge module: one block per page (no per-item card, no left color bar) */
+  .kb-module{background:var(--panel);border:1px solid #eef3f1;border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:4px 22px;font-size:15px}
+  .kb-item{display:flex;gap:12px;padding:11px 0;align-items:flex-start}
+  .kb-item .num{flex:none;margin-top:3px;background:linear-gradient(135deg,var(--mint),#54c79f);
+    color:#fff;font-family:"Microsoft YaHei",sans-serif;font-size:12.5px;font-weight:700;
+    min-width:24px;height:22px;padding:0 7px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(47,122,102,.2)}
+  .kb-body{flex:1;min-width:0}
+  .kb-line{margin:1px 0;line-height:1.85}
+  .kb-line.sub{padding-left:15px;color:#36504a;font-size:.95em;position:relative}
+  .kb-line.sub::before{content:"";position:absolute;left:1px;top:12px;width:5px;height:5px;border-radius:50%;
+    background:var(--mint-line)}
+  .kb-line.lead{font-weight:600}
+
+  @media(max-width:860px){
+    .page-main{padding:10px 14px 40px}
+    /* 手机/微信端：两个分类并列显示 */
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 0 0}
+    .tab{text-align:center;white-space:normal;line-height:1.35;font-size:13.5px;padding:9px 10px}
+  }
+
+  /* blanks */
+  .blank{display:inline-block;min-width:2.4em;vertical-align:baseline;cursor:pointer;
+    border-bottom:2px solid var(--mint-line);background:rgba(159,211,199,.10);
+    border-radius:3px 3px 0 0;padding:0 .15em;margin:0 .06em;transition:.18s;color:transparent;
+    text-align:center;font-family:"Microsoft YaHei",sans-serif;user-select:none}
+  .blank::after{content:"?";color:var(--mint);font-weight:700;font-size:.85em;letter-spacing:.1em}
+  .blank:hover{background:rgba(159,211,199,.22)}
+  .blank.shown{color:var(--mint-d);background:var(--mint-l);border-bottom-color:var(--mint);
+    font-weight:600;text-align:left}
+  .blank.shown::after{content:""}
+
+  /* input style */
+  body.input .blank{display:none}
+  body.input .blank-in{display:inline-block}
+  .blank-in{display:none;width:auto;min-width:3em;font-family:"Microsoft YaHei",sans-serif;
+    font-size:15px;border:1px solid var(--mint-line);border-radius:7px;padding:1px 8px;color:var(--mint-d);
+    background:#fff;cursor:pointer;transition:.18s}
+  .blank-in:hover{border-color:var(--mint)}
+  .blank-in.filled{background:var(--mint-l);font-weight:600;border-color:var(--mint)}
+
+  /* pagination */
+  .pager{position:sticky;bottom:0;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);
+    border-top:1px solid #eaf1ef;padding:13px 20px;display:flex;align-items:center;justify-content:center;
+    gap:12px;flex-wrap:wrap;font-family:"Microsoft YaHei",sans-serif;z-index:20}
+  .pager button{font-size:14px;padding:8px 16px;border-radius:10px;border:1px solid #d8e9e3;
+    background:#fff;color:var(--mint-d);cursor:pointer;transition:.18s}
+  .pager button:hover:not(:disabled){background:var(--mint-l)}
+  .pager button:disabled{opacity:.4;cursor:not-allowed}
+  .pager .info{font-size:13.5px;color:var(--sub)}
+  .pager .info b{color:var(--mint-d)}
+  .pager input{width:58px;font-size:14px;padding:7px 6px;text-align:center;border-radius:9px;
+    border:1px solid #d8e9e3;color:var(--ink)}
+  .pager input:focus{outline:none;border-color:var(--mint)}
+  .pager .go{border-color:var(--mint);background:var(--mint);color:#fff}
+  .pager .go:hover{filter:brightness(1.05)}
+  .progress{max-width:880px;margin:6px auto 0;height:3px;background:#e6efec;border-radius:3px;overflow:hidden}
+  .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),#5fd0a8);width:0;transition:.25s}
+  @media(max-width:560px){
+    .brand h1{font-size:16px}.kb-module{font-size:14px}
+    .page-main{padding:8px 12px 40px}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <div class="logo">史</div>
+    <div>
+      <h1>自考马原15044 · 在线知识文库</h1>
+      <p>15044 · 2026年10月考期 · 点击横线处显示重点关键词</p>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="tools">
+    <button id="btnAll">显示全部答案</button>
+    <div class="seg" title="挖空样式">
+      <button id="styleLine" class="on">横线</button>
+      <button id="styleInput">输入框</button>
+    </div>
+    <button id="fsMinus">A−</button>
+    <button id="fsPlus">A＋</button>
+  </div>
+</header>
+
+<div class="page-main">
+<div class="tabs" id="tabs"></div>
+
+<main>
+  <div class="note" id="note">
+    <h3>📖 考生须知 <span class="toggle" id="noteToggle">[收起]</span></h3>
+    <ul id="noteList"></ul>
+  </div>
+  <div class="page-meta" id="pageMeta"></div>
+  <div id="content"></div>
+  <div class="progress"><i id="bar"></i></div>
+</main>
+</div>
+
+<div class="pager">
+  <button id="prev">← 上一页</button>
+  <span class="info">第 <b id="cur">1</b> / <b id="total">1</b> 页</span>
+  <input id="jump" type="number" min="1" value="1" aria-label="跳转页码">
+  <button class="go" id="go">跳转</button>
+  <button id="next">下一页 →</button>
+</div>
+
+<script src="15044.data.js"></script>
+<script>
+const DATA = window.KB_DATA;
+const CARDS_PER_PAGE = 20;
+let page = 1, totalPages = 1, allShown = false, fontSize = 15;
+
+// flatten cards with section ref
+const flat = [];
+if(DATA && DATA.sections){ DATA.sections.forEach((sec, si) => sec.cards.forEach(c => flat.push({sec, si, card:c}))); }
+totalPages = Math.max(1, Math.ceil(flat.length / CARDS_PER_PAGE));
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+function renderLine(parts){
+  let h = '';
+  for(const p of parts){
+    if(p.t === 'blank'){
+      const w = Math.max(2.4, Math.min(p.v.length * 1.05, 14)).toFixed(1);
+      h += `<span class="blank" style="min-width:${w}em" data-ans="${esc(p.v)}"></span>`;
+      h += `<input class="blank-in" type="text" readonly data-ans="${esc(p.v)}" placeholder="?">`;
+    } else {
+      h += esc(p.v);
+    }
+  }
+  return h;
+}
+
+function renderModule(slice){
+  const items = slice.map(item=>{
+    const c = item.card;
+    let body = '';
+    c.lines.forEach((ln, i) => body += `<div class="kb-line ${i>0?'sub':'lead'}">${renderLine(ln)}</div>`);
+    return `<div class="kb-item"><span class="num">${c.num}</span><div class="kb-body">${body}</div></div>`;
+  }).join('');
+  return `<div class="kb-module">${items}</div>`;
+}
+
+function renderTabs(){
+  const t = document.getElementById('tabs');
+  t.innerHTML = DATA.sections.map((s,i)=>{
+    const cnt = s.cards.length;
+    return `<div class="tab" data-sec="${i}">${esc(s.title)} <span style="opacity:.6;font-size:12px">(${cnt})</span></div>`;
+  }).join('');
+  t.querySelectorAll('.tab').forEach(el=>{
+    el.onclick = ()=>{
+      const si = +el.dataset.sec;
+      const firstCardIdx = flat.findIndex(f=>f.si===si);
+      if(firstCardIdx>=0){ page = Math.floor(firstCardIdx / CARDS_PER_PAGE)+1; draw(); }
+    };
+  });
+  highlightTab();
+}
+
+function highlightTab(){
+  const start = (page-1)*CARDS_PER_PAGE, end = Math.min(start+CARDS_PER_PAGE, flat.length);
+  const si = flat[start] ? flat[start].si : 0;
+  document.querySelectorAll('.tab').forEach(el=>{
+    el.classList.toggle('on', +el.dataset.sec === si);
+  });
+}
+
+function renderNote(){
+  document.getElementById('noteList').innerHTML =
+    DATA.intro.map(t=>`<li>${esc(t)}</li>`).join('');
+}
+
+function draw(){
+  page = Math.min(Math.max(1, page), totalPages);
+  const start = (page-1)*CARDS_PER_PAGE;
+  const slice = flat.slice(start, start+CARDS_PER_PAGE);
+  document.getElementById('content').innerHTML = renderModule(slice);
+  document.getElementById('cur').textContent = page;
+  document.getElementById('total').textContent = totalPages;
+  document.getElementById('jump').value = page;
+  document.getElementById('prev').disabled = page===1;
+  document.getElementById('next').disabled = page===totalPages;
+  document.getElementById('pageMeta').innerHTML =
+    `共 <b>${flat.length}</b> 个知识点 · 当前第 <b>${page}</b> 页 / 共 <b>${totalPages}</b> 页`;
+  document.getElementById('bar').style.width = (page/totalPages*100)+'%';
+  applyStyle();
+  if(allShown) showAll(true);
+  highlightTab();
+  bindBlanks();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function bindBlanks(){
+  document.querySelectorAll('#content .blank').forEach(el=>{
+    el.onclick = ()=>{ const shown=el.classList.toggle('shown');
+      el.textContent = shown ? el.dataset.ans : ''; };
+  });
+  document.querySelectorAll('#content .blank-in').forEach(el=>{
+    el.onclick = ()=>{ const filled=el.classList.toggle('filled');
+      el.value = filled ? el.dataset.ans : ''; };
+  });
+}
+
+function applyStyle(){
+  const input = document.body.classList.contains('input');
+  document.querySelectorAll('#content .blank').forEach(el=>{
+    if(input){ el.style.display='none'; }
+    else { el.style.display=''; }
+  });
+  document.querySelectorAll('#content .blank-in').forEach(el=>{
+    if(input){ el.style.display=''; }
+    else { el.style.display='none'; el.classList.remove('filled'); el.value=''; }
+  });
+}
+
+function showAll(on){
+  allShown = on;
+  document.getElementById('btnAll').textContent = on ? '隐藏全部答案' : '显示全部答案';
+  document.getElementById('btnAll').classList.toggle('on', on);
+  document.querySelectorAll('#content .blank').forEach(el=>{
+    el.classList.toggle('shown', on); el.textContent = on ? el.dataset.ans : '';
+  });
+  document.querySelectorAll('#content .blank-in').forEach(el=>{
+    el.classList.toggle('filled', on); el.value = on ? el.dataset.ans : '';
+  });
+}
+
+// events
+document.getElementById('prev').onclick = ()=>{ page--; draw(); };
+document.getElementById('next').onclick = ()=>{ page++; draw(); };
+document.getElementById('go').onclick = ()=>{
+  const v = parseInt(document.getElementById('jump').value,10);
+  if(v>=1 && v<=totalPages){ page=v; draw(); }
+};
+document.getElementById('jump').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('go').click(); });
+document.getElementById('btnAll').onclick = ()=> showAll(!allShown);
+document.getElementById('noteToggle').onclick = ()=>{
+  const n=document.getElementById('noteList'); const t=document.getElementById('noteToggle');
+  const hide = n.style.display==='none'; n.style.display = hide?'':'none'; t.textContent = hide?'[收起]':'[展开]';
+};
+document.getElementById('styleLine').onclick = ()=>{
+  document.body.classList.remove('input');
+  document.getElementById('styleLine').classList.add('on');
+  document.getElementById('styleInput').classList.remove('on'); applyStyle();
+};
+document.getElementById('styleInput').onclick = ()=>{
+  document.body.classList.add('input');
+  document.getElementById('styleInput').classList.add('on');
+  document.getElementById('styleLine').classList.remove('on'); applyStyle();
+};
+document.getElementById('fsPlus').onclick = ()=>{ fontSize=Math.min(fontSize+1.5,24); setFS(); };
+document.getElementById('fsMinus').onclick = ()=>{ fontSize=Math.max(fontSize-1.5,13); setFS(); };
+function setFS(){ document.querySelectorAll('.kb-module').forEach(el=>el.style.fontSize=fontSize+'px'); }
+
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowLeft'){ page--; draw(); }
+  if(e.key==='ArrowRight'){ page++; draw(); }
+});
+
+if(DATA && DATA.sections){
+  renderTabs(); renderNote(); draw();
+} else {
+  document.getElementById('content').innerHTML =
+    '<div style="padding:60px;text-align:center;color:#888;font-family:sans-serif">' +
+    '未能加载数据文件 15044.data.js，请确认它与本页面在同一目录后刷新。</div>';
+}</script>
+</body>
+</html>
